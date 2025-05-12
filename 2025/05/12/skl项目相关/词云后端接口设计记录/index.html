@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="kan">
+    
+    <title>
+        
+            词云后端接口设计记录 |
+        
+        Learning Notes
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/logo.svg">
+    
+    
+<link rel="stylesheet" href="/font/css/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/font/css/regular.min.css">
+
+    
+<link rel="stylesheet" href="/font/css/solid.min.css">
+
+    
+<link rel="stylesheet" href="/font/css/brands.min.css">
+
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"en","path":"search.json"}
+    KEEP.theme_config = {"0":"_","1":"c","2":"o","3":"n","4":"f","5":"i","6":"g","7":".","8":"k","9":"e","10":"e","11":"p","12":".","13":"y","14":"m","15":"l","base_info":{"primary_color":"#0066cc","title":"Learning Notes","author":"kan","avatar":"/images/avatar.svg","logo":"/images/logo.svg","favicon":"/images/logo.svg"},"menu":{"home":"/","archives":"/archives","categories":"/categories","tags":"/tags","about":"/about"},"first_screen":{"enable":true,"background_img":"/images/bg.svg","background_img_dark":"/images/bg.svg","description":"Welcome to my Blog.","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"announcement":null,"category":false,"tag":false,"post_datetime":"updated"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":false,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":false,"share":false,"reward":{"enable":false,"img_link":null,"text":null,"icon":null}},"code_block":{"tools":{"enable":false,"style":"default"},"highlight_theme":"default"},"toc":{"enable":true,"number":false,"expand_all":false,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":false,"site_uv":false,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.39"},"waline":{"server_url":null,"reaction":false,"version":"3.3.2"},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":false,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":true,"site_deploy":{"enable":true,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":false,"css":[null],"js":[null]},"search":{"path":"search.json","field":"post","content":true,"format":"striptags"},"root":"","source_data":{},"version":"4.2.5"}
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"}
+    KEEP.language_code_block = {"copy":"Copy code","copied":"Copied","fold":"Fold code block","folded":"Folded"}
+    KEEP.language_copy_copyright = {"copy":"Copy copyright info","copied":"Copied","title":"Original post title","author":"Original post author","link":"Original post link"}
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+                <a class="logo-image border-box" href="/">
+                    <img src="/images/logo.svg">
+                </a>
+            
+            <a class="site-name border-box" href="/">
+               Learning Notes
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                HOME
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                ARCHIVES
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/categories">
+                                
+                                CATEGORIES
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/tags">
+                                
+                                TAGS
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                ABOUT
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                            HOME
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                            ARCHIVES
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/categories">
+                            
+                            CATEGORIES
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/tags">
+                            
+                            TAGS
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                            ABOUT
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        词云后端接口设计记录
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/avatar.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">kan</span>
+                                
+                                    <span class="author-badge">Lv1</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2025-05-12 16:36:37</span>
+            </span>
+
+            
+                <span class="meta-info-item post-update-date">
+                    <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                    <span class="datetime" data-updated="Mon May 12 2025 16:54:49 GMT+0800">2025-05-12 16:54:49</span>
+                </span>
+            
+        
+
+        
+            <span class="meta-info-item post-category border-box"><i class="icon fas fa-folder"></i>&nbsp;
+                <ul class="post-category-ul">
+                    
+                            <li class="category-item"><a href="/categories/skl%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/">skl项目相关</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <p><strong>以下是词云接口设计的记录。</strong></p>
+<h1 id="1-在数据库层建立索引"><a href="#1-在数据库层建立索引" class="headerlink" title="1.在数据库层建立索引"></a>1.在数据库层建立索引</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 关键词统计</span><br><span class="line"> * 数据是文本形式，建立全文索引</span><br><span class="line"> * CREATE FULLTEXT INDEX idx_keywords_fulltext ON cssci_info(keywords);</span><br><span class="line"> */</span><br><span class="line"> // 这里主要是为了对统计结果进行验证时使用，对统计关键词数量帮助不大。</span><br></pre></td></tr></table></figure>
+
+<p>全文索引提供了更灵活的服务，比如：</p>
+<p>　　1. like 只是进行模式匹配，全文索引却提供了一些语法语义的查询功能，会将要查的字符串进行分词操作，这决定于MySQL的词库。</p>
+<p>　　2. 全文索引可以自己设置词语的最小、最大长度，要忽略的词，这些都是可以设置的。</p>
+<p>　　3. 用全文索引去某个列查一个字符串，会返回匹配度，可以理解为匹配的关键字个数，是个浮点数。</p>
+<p>总之就是，全文索引因为用上了索引，性能更高，有词库支撑可以进行分词提供了一些语义查询的功能，有词语停用表忽略某些词语，有词语最大最小值可以设置等更灵活。</p>
+<p>参考链接：<a class="link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/qsws/p/11883442.html" >https://www.cnblogs.com/qsws/p/11883442.html<i class="fas fa-external-link-alt"></i></a></p>
+<h1 id="2-GET请求接口设计"><a href="#2-GET请求接口设计" class="headerlink" title="2.GET请求接口设计"></a>2.GET请求接口设计</h1><p><img   src="https://bucket-for-typora-1357330695.cos.ap-chengdu.myqcloud.com/image-20250512155548750.png"  alt="image-20250512155548750"></p>
+<p>这个接口主要是返回cssci_info论文表中，每个关键词出现的次数。之后获取topN个关键词的POST请求接口在这个接口的基础上实现。</p>
+<h2 id="（1）存在的问题"><a href="#（1）存在的问题" class="headerlink" title="（1）存在的问题"></a><strong>（1）存在的问题</strong></h2><p>  由于论文表的数据量非常大，因此，在数据访问层（infrastructure）需要定义合理的Mapper以及在数据库（mysql）层设计合理的查询语句，以提升查询的性能，减少数据请求后返回数据的时长。</p>
+<h2 id="（2）创建存储过程（统计关键词）"><a href="#（2）创建存储过程（统计关键词）" class="headerlink" title="（2）创建存储过程（统计关键词）"></a><strong>（2）创建存储过程（统计关键词）</strong></h2><p>（利用 <code>JSON_TABLE</code> 来拆分关键词并进行统计。对于大型数据集（cssci_info表有80万行），这种方法通常比逐行基于游标的拆分或递归 CTE 具有显著的性能优势。）</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 如果想要运行这个接口，需要在sql命令行执行以下代码</span></span><br><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> CalculateKeywordStatistics()</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SELECT</span></span><br><span class="line">        <span class="built_in">TRIM</span>(jt.keyword_val) <span class="keyword">AS</span> keyword,  <span class="comment">-- 重命名以避免与外部作用域中可能的 &#x27;keyword&#x27; 保留字或列名冲突</span></span><br><span class="line">        <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> count</span><br><span class="line">    <span class="keyword">FROM</span></span><br><span class="line">        cssci_info ci  <span class="comment">-- 你的表名</span></span><br><span class="line">    <span class="keyword">CROSS</span> <span class="keyword">JOIN</span></span><br><span class="line">        <span class="built_in">JSON_TABLE</span>(</span><br><span class="line">            <span class="comment">-- 从分号分隔的关键词构造一个有效的 JSON 数组字符串</span></span><br><span class="line">            <span class="comment">-- 例如：&quot;a;b;c&quot; 变为 &#x27;[&quot;a&quot;,&quot;b&quot;,&quot;c&quot;]&#x27;</span></span><br><span class="line">            <span class="comment">-- 例如：&quot;a;b;&quot; 变为 &#x27;[&quot;a&quot;,&quot;b&quot;]&#x27; (经过 TRIM 处理后)</span></span><br><span class="line">            <span class="comment">-- 例如：&quot;;a;b&quot; 变为 &#x27;[&quot;a&quot;,&quot;b&quot;]&#x27; (经过 TRIM 处理后)</span></span><br><span class="line">            <span class="comment">-- 例如：&quot;&quot; 或 &quot;;&quot; 或 &quot;;;&quot; 变为 &#x27;[]&#x27; 或 &#x27;[&quot;&quot;]&#x27; (会被后续过滤)</span></span><br><span class="line">            CONCAT(<span class="string">&#x27;[&quot;&#x27;</span>,</span><br><span class="line">                   REPLACE(</span><br><span class="line">                       <span class="built_in">TRIM</span>(<span class="keyword">BOTH</span> <span class="string">&#x27;;&#x27;</span> <span class="keyword">FROM</span> ci.keywords), <span class="comment">-- 移除开头和结尾的分号</span></span><br><span class="line">                       <span class="string">&#x27;;&#x27;</span>,                             <span class="comment">-- 替换内部分号</span></span><br><span class="line">                       <span class="string">&#x27;&quot;,&quot;&#x27;</span></span><br><span class="line">                   ),</span><br><span class="line">                   <span class="string">&#x27;&quot;]&#x27;</span>),</span><br><span class="line">            <span class="string">&#x27;$[*]&#x27;</span> COLUMNS ( <span class="comment">-- 迭代 JSON 数组中的每个元素</span></span><br><span class="line">                keyword_val <span class="type">VARCHAR</span>(<span class="number">255</span>) PATH <span class="string">&#x27;$&#x27;</span> <span class="comment">-- 提取每个元素的字符串值</span></span><br><span class="line">            )</span><br><span class="line">        ) <span class="keyword">AS</span> jt</span><br><span class="line">    <span class="keyword">WHERE</span></span><br><span class="line">        ci.keywords <span class="keyword">IS</span> <span class="keyword">NOT NULL</span>                <span class="comment">-- 确保原始 keywords 字符串不为 NULL</span></span><br><span class="line">        <span class="keyword">AND</span> ci.keywords <span class="operator">!=</span> <span class="string">&#x27;&#x27;</span>                  <span class="comment">-- 确保原始 keywords 字符串不为空</span></span><br><span class="line">        <span class="keyword">AND</span> <span class="built_in">TRIM</span>(jt.keyword_val) <span class="keyword">IS</span> <span class="keyword">NOT NULL</span>   <span class="comment">-- 确保提取的关键词不为 NULL</span></span><br><span class="line">        <span class="keyword">AND</span> <span class="built_in">TRIM</span>(jt.keyword_val) <span class="operator">!=</span> <span class="string">&#x27;&#x27;</span>         <span class="comment">-- 确保提取的关键词不是空字符串</span></span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span></span><br><span class="line">        <span class="built_in">TRIM</span>(jt.keyword_val)</span><br><span class="line">    <span class="keyword">ORDER</span> <span class="keyword">BY</span></span><br><span class="line">        count <span class="keyword">DESC</span>;</span><br><span class="line"><span class="keyword">END</span> <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
+
+<p>这个存储过程将执行以下操作：</p>
+<ol>
+<li><p>接收以分号分隔的 <code>keywords</code> 字符串。</p>
+</li>
+<li><p>移除任何开头或结尾的分号，以避免在两端产生空的关键词。</p>
+</li>
+<li><p>将其转换为 JSON 数组字符串（例如，<code>&quot;kw1;kw2;kw3&quot;</code> 变为 <code>[&quot;kw1&quot;,&quot;kw2&quot;,&quot;kw3&quot;]</code>）。</p>
+</li>
+<li><p>使用 <code>JSON_TABLE</code> 将此 JSON 数组展开为多行。</p>
+</li>
+<li><p>按提取的关键词分组并统计数量。</p>
+<p><img   src="https://bucket-for-typora-1357330695.cos.ap-chengdu.myqcloud.com/image-20250512150639805.png"  alt="image-20250512150639805"></p>
+</li>
+</ol>
+<h2 id="（3）定义Mapper"><a href="#（3）定义Mapper" class="headerlink" title="（3）定义Mapper"></a><strong>（3）定义Mapper</strong></h2><p>CSSCIMapper代码中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 关键词统计 (使用存储过程和 JSON_TABLE 进行优化)</span></span><br><span class="line"><span class="comment">     * 假设可能存在 FULLTEXT INDEX idx_keywords_fulltext ON cssci_info(keywords)，</span></span><br><span class="line"><span class="comment">     * 但此特定查询方法不直接使用全文索引进行拆分。</span></span><br><span class="line"><span class="comment">     * 全文索引主要用于 MATCH()...AGAINST() 类型的查询。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Select(&quot;&#123;CALL CalculateKeywordStatistics()&#125;&quot;)</span></span><br><span class="line">    <span class="meta">@Options(statementType = StatementType.CALLABLE)</span> <span class="comment">// 调用存储过程时非常重要</span></span><br><span class="line">    List&lt;Map&lt;String, Object&gt;&gt; <span class="title function_">findKeywordStatistics</span><span class="params">()</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>这种方法的优点：</strong></p>
+<ol>
+<li><strong>性能:</strong> <code>JSON_TABLE</code> 是在 MySQL 内部用 C&#x2F;C++ 实现的，针对 JSON 处理和此类“将字符串拆分为行”的操作进行了高度优化。对于大型表，它通常比手动字符串操作（如循环或递归 CTE）快得多。</li>
+<li><strong>动态关键词数量:</strong> 它可以处理 <code>keywords</code> 字符串中任意数量的关键词，而无需像之前那样指定一个上限（例如10个）。</li>
+<li><strong>Mapper 中 SQL 更简洁:</strong> Java 代码现在只有一个对存储过程的简单调用，将复杂的 SQL 逻辑封装在了数据库内部。</li>
+<li><strong>更好地处理边缘情况:</strong> <code>TRIM(BOTH &#39;;&#39;)</code> 和后续的 <code>WHERE TRIM(jt.keyword_val) != &#39;&#39;</code> 有助于更稳健地管理格式不正确的关键词字符串（如开头&#x2F;结尾有分号，或连续多个分号）。</li>
+</ol>
+<h2 id="（4）service层的写法"><a href="#（4）service层的写法" class="headerlink" title="（4）service层的写法"></a><strong>（4）service层的写法</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 定义一个 SLF4J Logger 实例</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LoggerFactory.getLogger(CSCIServiceImpl.class);</span><br><span class="line"><span class="comment">// 这一行在写的时候会有标红，import class时，不要选择java8，选择SLF4J Logger版本。</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 统计单个关键词的数量的具体实现</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="comment">// 统计所有论文的关键词，并返回唯一关键词的数量</span></span><br><span class="line"><span class="meta">@Cacheable(value = &quot;keywords&quot;, key = &quot;#root.methodName&quot;)</span>  <span class="comment">// 使用缓存，key 基于方法名称</span></span><br><span class="line"><span class="keyword">public</span> List&lt;KeywordsDTO&gt; <span class="title function_">getKeywordStatistics</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 2. 在方法体开始处添加明确的“缓存未命中”日志</span></span><br><span class="line">    logger.info(<span class="string">&quot;&gt;&gt;&gt; [缓存未命中] getKeywordStatistics() 方法体被执行，正在从数据库获取数据...&quot;</span>);</span><br><span class="line"></span><br><span class="line">    List&lt;Map&lt;String, Object&gt;&gt; keywordCounts = CSCIMapper.findKeywordStatistics();</span><br><span class="line">    List&lt;KeywordsDTO&gt; keywordDTOs = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (Map&lt;String, Object&gt; entry : keywordCounts) &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">keyword</span> <span class="operator">=</span> (String) entry.get(<span class="string">&quot;keyword&quot;</span>);</span><br><span class="line">        <span class="type">Number</span> <span class="variable">countNumber</span> <span class="operator">=</span> (Number) entry.get(<span class="string">&quot;count&quot;</span>);</span><br><span class="line">        <span class="type">Integer</span> <span class="variable">count</span> <span class="operator">=</span> countNumber.intValue();</span><br><span class="line">        keywordDTOs.add(<span class="keyword">new</span> <span class="title class_">KeywordsDTO</span>(keyword, count));</span><br><span class="line">    &#125;</span><br><span class="line">    logger.info(<span class="string">&quot;getKeywordStatistics() 方法执行完毕，获取到 &#123;&#125; 个关键词统计。&quot;</span>, keywordDTOs.size());</span><br><span class="line">    <span class="keyword">return</span> keywordDTOs;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这里主要对@Cacheable(value &#x3D; “keywords”, key &#x3D; “#root.methodName”)  &#x2F;&#x2F; 使用缓存，key 基于方法名称</p>
+<p>这一行进行解释，因为在这个服务里，我们引入了<strong>redis</strong>来存储数据库的数据，以加快接口的返回速度。</p>
+<p>Cache Manager的位置在：（数据访问层）</p>
+<p>D:\UGit\shekelian-spring-backend\crossMJ-infrastructure\src\main\java\com\avalon\jpcap\infrastructure\config\RedisConfig.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * CacheManager 的作用是：</span></span><br><span class="line"><span class="comment"> * 设定一个管理器，那么在service处直接使用注解，就可以自动访问或创建缓存</span></span><br><span class="line"><span class="comment"> * 缓存的形式一般是键值对</span></span><br><span class="line"><span class="comment"> * 作为缓存的中央访问点和配置中心。</span></span><br><span class="line"><span class="comment"> * 解耦你的应用程序与具体的缓存实现技术。</span></span><br><span class="line"><span class="comment"> * 使得通过注解声明式地使用缓存成为可能。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="keyword">public</span> CacheManager <span class="title function_">cacheManager</span><span class="params">(RedisConnectionFactory factory)</span> &#123;</span><br><span class="line">    <span class="type">StringRedisSerializer</span> <span class="variable">stringRedisSerializer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringRedisSerializer</span>();</span><br><span class="line">    Jackson2JsonRedisSerializer&lt;Object&gt; jackson2JsonRedisSerializer = <span class="keyword">new</span> <span class="title class_">Jackson2JsonRedisSerializer</span>&lt;&gt;(Object.class);</span><br><span class="line">    <span class="type">ObjectMapper</span> <span class="variable">objectMapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>();</span><br><span class="line">    objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);</span><br><span class="line">    <span class="comment">// 下面这行在新版Spring Boot中可能需要改为 activateDefaultTyping(objectMapper.getPolymorphicTypeValidator(), ...)</span></span><br><span class="line">    <span class="comment">// 对于旧版，LaissezFaireSubTypeValidator.instance 通常可以工作</span></span><br><span class="line">    objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance,</span><br><span class="line">            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);</span><br><span class="line">    jackson2JsonRedisSerializer.setObjectMapper(objectMapper);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 默认的缓存配置：有效期1小时，键使用String序列化，值使用Jackson JSON序列化</span></span><br><span class="line">    <span class="type">RedisCacheConfiguration</span> <span class="variable">defaultConfig</span> <span class="operator">=</span> RedisCacheConfiguration.defaultCacheConfig()</span><br><span class="line">            .entryTtl(Duration.ofHours(<span class="number">1</span>)) <span class="comment">// 设置默认缓存有效期为1小时</span></span><br><span class="line">            .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(stringRedisSerializer))</span><br><span class="line">            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))</span><br><span class="line">            .disableCachingNullValues(); <span class="comment">// 禁止缓存null值 (可选)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 为特定的缓存名称（如 &quot;keywords&quot;）配置不同的有效期 (可选)</span></span><br><span class="line">    Map&lt;String, RedisCacheConfiguration&gt; cacheConfigurations = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    cacheConfigurations.put(<span class="string">&quot;keywords&quot;</span>, defaultConfig.entryTtl(Duration.ofMinutes(<span class="number">30</span>))); <span class="comment">// &quot;keywords&quot; 缓存有效期30分钟</span></span><br><span class="line">    <span class="comment">// 你可以为其他缓存名称添加更多配置</span></span><br><span class="line">    <span class="comment">// cacheConfigurations.put(&quot;anotherCache&quot;, defaultConfig.entryTtl(Duration.ofDays(1)));</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RedisCacheManager.builder(factory)</span><br><span class="line">            .cacheDefaults(defaultConfig) <span class="comment">// 应用默认配置</span></span><br><span class="line">            .withInitialCacheConfigurations(cacheConfigurations) <span class="comment">// 应用特定名称的缓存配置</span></span><br><span class="line">            .build();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>接下来我们来验证引入的redis是否生效了：</strong></p>
+<p>（1）首先在运行GET后端接口前，在命令行查看已有的键。</p>
+<p><img   src="https://bucket-for-typora-1357330695.cos.ap-chengdu.myqcloud.com/image-20250512152934862.png"  alt="image-20250512152934862"></p>
+<p>现在并没有相关的存储关键词的键。</p>
+<p>（2）运行后端</p>
+<img     src="https://bucket-for-typora-1357330695.cos.ap-chengdu.myqcloud.com/image-20250512153225867.png"   alt="image-20250512153225867" style="zoom:200%;" >
+
+<p>在这里我们查看日志，发现缓存未命中，直接访问数据库，返回结果非常慢，但是由于Cache Manager以及在服务中@Cacheable的引用，便自动创建了redis缓存。我们再次查看redis键：</p>
+<p><img   src="https://bucket-for-typora-1357330695.cos.ap-chengdu.myqcloud.com/image-20250512155400068.png"  alt="image-20250512155400068"></p>
+<p>发现多了一个键值对，数据类型为string，用来存储从数据库获取的数据，那么再次访问接口，缓存命中：</p>
+<p><img   src="https://bucket-for-typora-1357330695.cos.ap-chengdu.myqcloud.com/image-20250512153552542.png"  alt="image-20250512153552542"></p>
+<p>发现用时少了非常多。redis是内存数据库，访问速度自然就快了许多，此外，由于返回的json数据量很大，浏览器在渲染这些数据也需要非常多的时间，我们并不需要使用全部的关键词，我们只需要数量最多的前N个关键词即可，而想要获取多少应该是灵活的，因此，接下来，我们设计一个获取topN的POST请求接口。</p>
+<h1 id="3-topN关键词POST请求接口设计"><a href="#3-topN关键词POST请求接口设计" class="headerlink" title="3.topN关键词POST请求接口设计"></a>3.topN关键词POST请求接口设计</h1><p><img   src="https://bucket-for-typora-1357330695.cos.ap-chengdu.myqcloud.com/image-20250512161523408.png"  alt="image-20250512161523408"></p>
+<p>由于我们已经有了GET请求，因此，我们只需要在service层调用GET请求就能获得关键词数据，再加上截取前N项的逻辑即可。为了方便阅读，我把CSSCIService的impl代码全部粘贴上来，有几个需要注意的点。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.avalon.jpcap.skl.impl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.avalon.jpcap.infrastructure.skl.mapper.CSCIMapper;</span><br><span class="line"><span class="keyword">import</span> com.avalon.jpcap.infrastructure.skl.mapper.PersonMapper;</span><br><span class="line"><span class="keyword">import</span> com.avalon.jpcap.repository.skl.AuthorCountPO;</span><br><span class="line"><span class="keyword">import</span> com.avalon.jpcap.repository.skl.PersonPO;</span><br><span class="line"><span class="keyword">import</span> com.avalon.jpcap.skl.DTO.CSCIInfoDTO;</span><br><span class="line"><span class="keyword">import</span> com.avalon.jpcap.skl.DTO.KeywordsDTO;</span><br><span class="line"><span class="keyword">import</span> com.avalon.jpcap.skl.converter.KeywordsDTOConverter;</span><br><span class="line"><span class="keyword">import</span> com.avalon.jpcap.skl.service.CSCIService;</span><br><span class="line"><span class="keyword">import</span> lombok.RequiredArgsConstructor;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.Logger;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cache.annotation.Cacheable;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.Collections;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CSCIServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">CSCIService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> CSCIMapper CSCIMapper;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> PersonMapper personMapper;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> KeywordsDTOConverter keywordsDTOConverter;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> CSCIService self; <span class="comment">// 注入自身代理</span></span><br><span class="line">    <span class="comment">// 1. 定义一个 SLF4J Logger 实例</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LoggerFactory.getLogger(CSCIServiceImpl.class);</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 统计单个关键词的数量的具体实现</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">// 统计所有论文的关键词，并返回唯一关键词的数量</span></span><br><span class="line">    <span class="meta">@Cacheable(value = &quot;keywords&quot;, key = &quot;#root.methodName&quot;)</span>  <span class="comment">// 使用缓存，key 基于方法名称</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;KeywordsDTO&gt; <span class="title function_">getKeywordStatistics</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 2. 在方法体开始处添加明确的“缓存未命中”日志</span></span><br><span class="line">        logger.info(<span class="string">&quot;&gt;&gt;&gt; [缓存未命中] getKeywordStatistics() 方法体被执行，正在从数据库获取数据...&quot;</span>);</span><br><span class="line"></span><br><span class="line">        List&lt;Map&lt;String, Object&gt;&gt; keywordCounts = CSCIMapper.findKeywordStatistics();</span><br><span class="line">        List&lt;KeywordsDTO&gt; keywordDTOs = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (Map&lt;String, Object&gt; entry : keywordCounts) &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">keyword</span> <span class="operator">=</span> (String) entry.get(<span class="string">&quot;keyword&quot;</span>);</span><br><span class="line">            <span class="type">Number</span> <span class="variable">countNumber</span> <span class="operator">=</span> (Number) entry.get(<span class="string">&quot;count&quot;</span>);</span><br><span class="line">            <span class="type">Integer</span> <span class="variable">count</span> <span class="operator">=</span> countNumber.intValue();</span><br><span class="line">            keywordDTOs.add(<span class="keyword">new</span> <span class="title class_">KeywordsDTO</span>(keyword, count));</span><br><span class="line">        &#125;</span><br><span class="line">        logger.info(<span class="string">&quot;getKeywordStatistics() 方法执行完毕，获取到 &#123;&#125; 个关键词统计。&quot;</span>, keywordDTOs.size());</span><br><span class="line">        <span class="keyword">return</span> keywordDTOs;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取topN关键词</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;KeywordsDTO&gt; <span class="title function_">getTopNKeywordStatistics</span><span class="params">(<span class="type">int</span> n)</span> &#123;</span><br><span class="line">        logger.info(<span class="string">&quot;方法 getTopNKeywordStatistics() 被执行，请求 Top N=&#123;&#125;&quot;</span>, n);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (n &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            logger.warn(<span class="string">&quot;请求的 N (&#123;&#125;) 无效 (小于等于0)，返回空列表。&quot;</span>, n);</span><br><span class="line">            <span class="keyword">return</span> Collections.emptyList();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 此调用会利用 getKeywordStatistics() 的缓存</span></span><br><span class="line">        <span class="comment">// 如果 getKeywordStatistics() 缓存命中，它内部的日志（包括上面的“缓存未命中”日志）将不会打印</span></span><br><span class="line">        List&lt;KeywordsDTO&gt; allKeywords = self.getKeywordStatistics(); <span class="comment">// 通过代理调用</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (allKeywords.isEmpty()) &#123;</span><br><span class="line">            logger.info(<span class="string">&quot;所有关键词列表为空，为 Top N 返回空列表。&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> Collections.emptyList();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        List&lt;KeywordsDTO&gt; topNKeywords = allKeywords.stream()</span><br><span class="line">                .limit(n)</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line">        logger.info(<span class="string">&quot;getTopNKeywordStatistics 方法执行完毕，从总共 &#123;&#125; 个关键词中，返回了 &#123;&#125; 个。&quot;</span>, allKeywords.size(), topNKeywords.size());</span><br><span class="line">        <span class="keyword">return</span> topNKeywords;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意service中这几行行代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> CSCIService self; <span class="comment">// 注入自身代理</span></span><br><span class="line">List&lt;KeywordsDTO&gt; allKeywords = self.getKeywordStatistics(); <span class="comment">// 通过自身代理调用</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 不能这么写</span></span><br><span class="line">List&lt;KeywordsDTO&gt; allKeywords = getKeywordStatistics();</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">引入自身代理的原因：</span></span><br><span class="line"><span class="comment">问题点：当一个 bean 的方法调用同一个 bean 的另一个方法时（即 this.anotherMethod()），</span></span><br><span class="line"><span class="comment">这个调用是直接在原始对象实例上发生的，它不会经过 Spring 的 AOP 代理。</span></span><br><span class="line"><span class="comment">因此，getKeywordStatistics() 方法上的 @Cacheable 注解（以及其他AOP注解如 @Transactional）在这种内部调用中不会生效。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">所以，即使第一次调用 getTopNKeywordStatistics() 时，getKeywordStatistics() 执行了，</span></span><br><span class="line"><span class="comment">并且理论上它的结果应该被缓存了，但第二次调用 getTopNKeywordStatistics() 时，它再次内部调用 getKeywordStatistics()，</span></span><br><span class="line"><span class="comment">这个内部调用仍然绕过了缓存检查，直接执行了 getKeywordStatistics() 的方法体，于是又打印了“缓存未命中”。</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<p>总结来说就是需要引入自身代理来防止代码绕过已有的缓存检查。这里调用后，topN这个接口也可以访问缓存，显著减少数据返回用时。</p>
+<p>在这里我们也给出controller的代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 新增的 POST 方法，用于获取 Top N 关键词</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@PostMapping(&quot;/word_cloud_by_top_n_keywords_CSSCI&quot;)</span> <span class="comment">// 新的路径</span></span><br><span class="line"><span class="meta">@ApiOperation(&quot;省课题词云分析(获取Top N)&quot;)</span></span><br><span class="line"><span class="keyword">public</span> HttpResult&lt;List&lt;KeywordsVO&gt;&gt; <span class="title function_">getWordCloudByTopNKeywordsCSSCI</span><span class="params">(</span></span><br><span class="line"><span class="params">        <span class="meta">@Valid</span> <span class="meta">@RequestBody</span> TopNRequest request // 使用 <span class="meta">@Valid</span> 触发 TopNRequest 中的校验</span></span><br><span class="line"><span class="params">)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> request.getN();</span><br><span class="line">    <span class="comment">// logger.info(&quot;POST /word_cloud_by_top_n_keywords_CSSCI called with n=&#123;&#125;&quot;, n);</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1. 调用服务层获取 Top N 的 DTO 列表</span></span><br><span class="line">    List&lt;KeywordsDTO&gt; topNKeywordDTOs = csciService.getTopNKeywordStatistics(n);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 将 DTO 列表转换为 VO 列表</span></span><br><span class="line">    List&lt;KeywordsVO&gt; topNKeywordsVOS = keywordsVOConverter.convertToVOList(topNKeywordDTOs);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// logger.info(&quot;Returning top &#123;&#125; keywords.&quot;, topNKeywordsVOS.size());</span></span><br><span class="line">    <span class="comment">// 3. 使用 HttpResult 包装并返回</span></span><br><span class="line">    <span class="keyword">return</span> HttpResult.success(topNKeywordsVOS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们看接口的运行情况：</p>
+<p><img   src="https://bucket-for-typora-1357330695.cos.ap-chengdu.myqcloud.com/image-20250512162247289.png"  alt="image-20250512162247289"></p>
+<p><img   src="https://bucket-for-typora-1357330695.cos.ap-chengdu.myqcloud.com/image-20250512161929977.png"  alt="image-20250512161929977"></p>
+<p>缓存未生效时用时非常长，将近40s。</p>
+<p>首次调用后生成了一条缓存，再次执行：</p>
+<p><img   src="https://bucket-for-typora-1357330695.cos.ap-chengdu.myqcloud.com/image-20250512162313404.png"  alt="image-20250512162313404"></p>
+<p><img   src="https://bucket-for-typora-1357330695.cos.ap-chengdu.myqcloud.com/image-20250512162117231.png"  alt="image-20250512162117231"></p>
+<p>发现用时缩短至1.12秒。</p>
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h1><p>经过上述的工作，我们在后端的各个层的设计，考虑了存储过程以及引入redis，顺利完成了词云的两个关键词的相关接口。</p>
+<p>现在只能返回中文的关键词统计。</p>
+<p>后续工作：</p>
+<p>（1）英文关键词统计。</p>
+<p>（2）在前端点击关键词，可以跳转到相关的论文列表。（多个论文会涉及到同一个关键词，这里需要考虑分页等情况）</p>
+<p>（3）优化方法，继续提升访问关键词的速度。</p>
+
+                    
+                </div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2025/04/30/skl%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E9%83%A8%E7%BD%B2%E6%95%B0%E6%8D%AE%E5%BA%93/"
+                                   title="部署数据库"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">部署数据库</span>
+                                        <span class="post-nav-item">Next posts</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E5%9C%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E5%B1%82%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95"><span class="nav-text">1.在数据库层建立索引</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-GET%E8%AF%B7%E6%B1%82%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1"><span class="nav-text">2.GET请求接口设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">（1）存在的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%88%9B%E5%BB%BA%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%EF%BC%88%E7%BB%9F%E8%AE%A1%E5%85%B3%E9%94%AE%E8%AF%8D%EF%BC%89"><span class="nav-text">（2）创建存储过程（统计关键词）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E5%AE%9A%E4%B9%89Mapper"><span class="nav-text">（3）定义Mapper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%884%EF%BC%89service%E5%B1%82%E7%9A%84%E5%86%99%E6%B3%95"><span class="nav-text">（4）service层的写法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-topN%E5%85%B3%E9%94%AE%E8%AF%8DPOST%E8%AF%B7%E6%B1%82%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1"><span class="nav-text">3.topN关键词POST请求接口设计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E6%80%BB%E7%BB%93"><span class="nav-text">4.总结</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+    &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2025
+    
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">kan</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        Powered by&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;&&nbsp;Theme&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+        
+        <div class="deploy-info info-item">
+            
+            This site is deployed on <span class="tooltip" data-tooltip-content="GitHub Pages"><img src="/images/brands/github.png"></span>
+            
+        </div>
+    
+
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="Search..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E5%9C%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E5%B1%82%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95"><span class="nav-text">1.在数据库层建立索引</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-GET%E8%AF%B7%E6%B1%82%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1"><span class="nav-text">2.GET请求接口设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">（1）存在的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%88%9B%E5%BB%BA%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%EF%BC%88%E7%BB%9F%E8%AE%A1%E5%85%B3%E9%94%AE%E8%AF%8D%EF%BC%89"><span class="nav-text">（2）创建存储过程（统计关键词）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E5%AE%9A%E4%B9%89Mapper"><span class="nav-text">（3）定义Mapper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%884%EF%BC%89service%E5%B1%82%E7%9A%84%E5%86%99%E6%B3%95"><span class="nav-text">（4）service层的写法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-topN%E5%85%B3%E9%94%AE%E8%AF%8DPOST%E8%AF%B7%E6%B1%82%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1"><span class="nav-text">3.topN关键词POST请求接口设计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E6%80%BB%E7%BB%93"><span class="nav-text">4.总结</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/toggle-theme.js"></script>
+
+<script src="/js/code-block.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+
+<!-- local search -->
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        
+<script src="/js/post/post-helper.js"></script>
+
+
+        <!-- toc -->
+        
+            
+<script src="/js/post/toc.js"></script>
+
+        
+
+        <!-- copyright-info -->
+        
+
+        <!-- share -->
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+</body>
+</html>
